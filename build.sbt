@@ -1,0 +1,14 @@
+name := """scraper4s"""
+
+version := "1.0"
+
+scalaVersion := "2.11.7"
+organization := "com.yukimt"
+
+libraryDependencies ++= Seq(
+  "org.specs2" %% "specs2-core" % "2.4.17" % "test",
+  "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.42.2",
+  "com.github.detro.ghostdriver" % "phantomjsdriver" % "1.1.0"
+)
+
+publishTo := Some(Resolver.file("scraper4s",file("./docs"))(Patterns(true, Resolver.mavenStyleBasePattern)))
