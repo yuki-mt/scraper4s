@@ -1,40 +1,31 @@
 package com.yukimt.scrape
 package browser
 
-import collection.JavaConversions._
-import org.openqa.selenium.WebDriver
-import scala.concurrent.duration.FiniteDuration
-import org.openqa.selenium.{Cookie, By, JavascriptExecutor}
-import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import scala.concurrent.duration._
 
 class UnitBrowser(
   val url: String,
-  val proxy: Option[ProxyServer],
-  val timeout: FiniteDuration,
-  val userAgent: UserAgent,
-  val customHeaders: Map[String, String]) extends Browser {
+  val proxy: Option[ProxyServer] = None,
+  val timeout: FiniteDuration = 10 seconds,
+  val userAgent: Option[UserAgent] = None,
+  val customHeaders: Map[String, String] = Map.empty) extends Browser {
 
   protected val driver = new FixedHtmlUnitDriver(proxy)
 
-  protected def setUserAgent = {
-    driver.setHeader("User-Agent", userAgent.toString)
+  /************Set up***********/
+  driver.manage.timeouts.implicitlyWait(getValue(timeout), timeout.unit)
+  customHeaders.foreach{
+    case (key, value) =>
+      driver.setHeader(key, value)
   }
-  protected def setCustomHeaders = {
-    customHeaders.foreach{
-      case (key, value) =>
-        driver.setHeader(key, value)
-    }
-  }
-  
-  def addHeader(key: String, value: String) = {
-    driver.setHeader(key, value)
-    this
-  }
+  userAgent.foreach(u => driver.setHeader("User-Agent", u.toString))
+  driver.get(url)
+
 
   /************Response Header***********/
   def getResponseHeader() = driver.headers
   def getStatusCode() = driver.statusCode
+
 
   def takeScreenshot(path: String, viewpoint: ViewPoint) = {
     throw new RuntimeException("'takeScreenshot' is not implemented in UnitBrowser")

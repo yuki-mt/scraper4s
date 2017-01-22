@@ -2,31 +2,21 @@ package com.yukimt.scrape
 package browser
 
 import collection.JavaConversions._
-import org.openqa.selenium.WebDriver
 import scala.concurrent.duration.FiniteDuration
-import org.openqa.selenium.{Cookie, By, JavascriptExecutor}
+import org.openqa.selenium.{WebDriver, Cookie, By, JavascriptExecutor}
 import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
 import java.util.UUID
+import com.yukimt.scrape.element.HtmlParser
 
 trait Browser {
   protected def driver: WebDriver // make it protected because WebDriver is mutable
+  lazy val parser = new HtmlParser(driver)
   def url: String
   def proxy: Option[ProxyServer]
   def timeout: FiniteDuration
-  def userAgent: UserAgent
+  def userAgent: Option[UserAgent]
   def customHeaders: Map[String, String]
-
-  /************Set up***********/
-  protected def setUserAgent: Unit
-  protected def setCustomHeaders: Unit
-  driver.manage.timeouts.implicitlyWait(getValue(timeout), timeout.unit)
-  setCustomHeaders
-  setUserAgent
-  driver.get(url)
   
-  /************Header***********/
-  def addHeader(key: String, value: String): Browser
-
   /************Cookie***********/
   def addCookie(key: String, value: String): Browser = {
     driver.manage.addCookie(new Cookie(key, value))
@@ -100,8 +90,12 @@ trait Browser {
 
   /************Javascript***********/
   def executeJs(code: String): Browser = {
-    driver.asInstanceOf[JavascriptExecutor].executeScript(code)
+    getJsExecutionResult(code)
     this
+  }
+  
+  def getJsExecutionResult(code: String): Any = {
+    driver.asInstanceOf[JavascriptExecutor].executeScript(code)
   }
 
   /************Histroy***********/
@@ -118,6 +112,16 @@ trait Browser {
   def getResponseHeader(): Map[String, String]
   def getStatusCode():Option[Int]
 
+
+  /************Parse***********/
+  def parse(f: HtmlParser => Any): Browser = {
+    getByParse(f)
+    this
+  }
+  def getByParse[T](f: HtmlParser => T): T = {
+    implicit val _driver: WebDriver = driver
+    f(parser)
+  }
 
   def takeScreenshot(path: String, viewpoint: ViewPoint): Browser
 
