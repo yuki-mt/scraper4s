@@ -21,4 +21,6 @@ class FormElement(val element: WebElement) extends HtmlElementLike {
     val newUrl = url + connector + queryString
     setUrl(newUrl)
   }
+
+  def submit(): Unit = element.submit
 }

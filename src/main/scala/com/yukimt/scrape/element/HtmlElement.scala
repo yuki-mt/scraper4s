@@ -14,6 +14,12 @@ trait HtmlElementLike {
   def parent: Option[HtmlElement] = Option(
     element.findElement(By.xpath(".//parent::node()"))
   )
+  def parentForm: Option[FormElement] = Option(
+    parent.flatMap{ p =>
+      if(p.tagName == "form") Some(p) 
+      else parantForm
+    }
+  )
   def children: Seq[HtmlElement] = {
     element.findElements(By.xpath(".//*")).map(e => e:HtmlElement)
   }
@@ -59,7 +65,6 @@ trait HtmlElementLike {
   def tagName: String = element.getTagName
   def insert(value: String) = element.sendKeys(value)
   def click() = element.click
-  def submit() = element.submit
 }
 
 class HtmlElement(val element: WebElement) extends HtmlElementLike {
