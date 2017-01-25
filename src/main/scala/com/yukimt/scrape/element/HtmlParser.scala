@@ -6,8 +6,12 @@ import collection.JavaConversions._
 import Implicit._
 
 class HtmlParser(driver: WebDriver) {
-  def findElement(by: By): Option[HtmlElement] = Option(driver.findElement(by))
-  def findElements(by: By): Seq[HtmlElement] = driver.findElements(by).map(e => e:HtmlElement)
+  def findElement(by: By): Option[HtmlElement] = {
+    Option(driver.findElement(by))
+  }
+  def findElements(by: By): Seq[HtmlElement] = {
+    driver.findElements(by).map(e => e:HtmlElement)
+  }
   def findElement(cssQuery: String): Option[HtmlElement] = {
     Option(driver.findElement(By.cssSelector(cssQuery)))
   }

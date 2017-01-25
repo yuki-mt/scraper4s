@@ -17,10 +17,6 @@ trait HtmlElementLike {
   def children: Seq[HtmlElement] = {
     element.findElements(By.xpath(".//*")).map(e => e:HtmlElement)
   }
-  def children(filter: By): Seq[HtmlElement] = {
-    element.findElements(By.xpath(".//*")).map(e => e:HtmlElement)
-
-  }
   def siblings: Seq[HtmlElement] = {
     Seq.concat(
       element.findElements(By.xpath("preceding-sibling::*")),
