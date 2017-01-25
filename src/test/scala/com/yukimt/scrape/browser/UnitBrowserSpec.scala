@@ -15,7 +15,7 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
     "set headers" in {
       val browser = new UnitBrowser(
         "http://localhost:3000",
-        userAgent = Some(new UserAgent(Device.Mac, BrowserType.Firefox)),
+        userAgent = new UserAgent(Device.Mac, BrowserType.Firefox),
         customHeaders = Map("X-My-Header" -> "hogefuga")
       )
 
@@ -24,8 +24,6 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
       
       headers("user-agent") === "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10; rv:33.0) Gecko/20100101 Firefox/33.0"
       headers("x-my-header") === "hogefuga"
-      
-      //TODO: addHeaderのテストもする
     }
 
     "get response header" in {

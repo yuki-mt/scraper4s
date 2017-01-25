@@ -5,17 +5,17 @@ import org.openqa.selenium.{WebElement, WebDriver}
 
 trait LinkElement extends HtmlElementLike {
   def setUrl(newUrl: String)(implicit driver: WebDriver): Unit
-  def getUrl(): Option[String]
+  def url: Option[String]
 
   def setQueryString(param: Map[String, String])(implicit driver: WebDriver): Unit = {
     val queryString = param.map{
       case (key, value) => s"$key=$value"
     }.mkString("&")
-    getUrl.foreach{ url =>
+    url.foreach{ _url =>
       val connector = 
-        if (url contains "?") "&"
+        if (_url contains "?") "&"
         else "?"
-      val newUrl = url + connector + queryString
+      val newUrl = _url + connector + queryString
       setUrl(newUrl)
     }
   }

@@ -8,10 +8,10 @@ import Implicit._
 class HtmlParser(driver: WebDriver) {
   def findElement(by: By): Option[HtmlElement] = Option(driver.findElement(by))
   def findElements(by: By): Seq[HtmlElement] = driver.findElements(by).map(e => e:HtmlElement)
-  def findElementByCssSelector(path: String): Option[HtmlElement] = {
-    Option(driver.findElement(By.cssSelector(path)))
+  def findElement(cssQuery: String): Option[HtmlElement] = {
+    Option(driver.findElement(By.cssSelector(cssQuery)))
   }
-  def findElementsByCssSelector(path: String): Seq[HtmlElement] = {
-    driver.findElements(By.cssSelector(path)).map(e => e:HtmlElement)
+  def findElements(cssQuery: String): Seq[HtmlElement] = {
+    driver.findElements(By.cssSelector(cssQuery)).map(e => e:HtmlElement)
   }
 }

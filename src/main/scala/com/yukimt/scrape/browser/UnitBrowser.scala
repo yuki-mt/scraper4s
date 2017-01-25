@@ -7,7 +7,7 @@ class UnitBrowser(
   val url: String,
   val proxy: Option[ProxyServer] = None,
   val timeout: FiniteDuration = 10 seconds,
-  val userAgent: Option[UserAgent] = None,
+  val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
   val customHeaders: Map[String, String] = Map.empty) extends Browser {
 
   protected val driver = new FixedHtmlUnitDriver(proxy)
@@ -18,7 +18,7 @@ class UnitBrowser(
     case (key, value) =>
       driver.setHeader(key, value)
   }
-  userAgent.foreach(u => driver.setHeader("User-Agent", u.toString))
+  driver.setHeader("User-Agent", userAgent.toString)
   driver.get(url)
 
 

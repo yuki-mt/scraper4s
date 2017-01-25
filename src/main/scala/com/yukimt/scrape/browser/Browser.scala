@@ -14,7 +14,7 @@ trait Browser {
   def url: String
   def proxy: Option[ProxyServer]
   def timeout: FiniteDuration
-  def userAgent: Option[UserAgent]
+  def userAgent: UserAgent
   def customHeaders: Map[String, String]
   
   /************Cookie***********/

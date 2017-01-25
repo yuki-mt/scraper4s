@@ -11,32 +11,34 @@ trait HtmlElementLike {
 
   def element: WebElement
 
-  def getParent(): Option[HtmlElement] = Option(
+  def parent: Option[HtmlElement] = Option(
     element.findElement(By.xpath(".//parent::node()"))
   )
-  def getChildren(): Seq[HtmlElement] = {
+  def children: Seq[HtmlElement] = {
     element.findElements(By.xpath(".//*")).map(e => e:HtmlElement)
   }
-  def getChildren(filter: By): Seq[HtmlElement] = {
+  def children(filter: By): Seq[HtmlElement] = {
     element.findElements(By.xpath(".//*")).map(e => e:HtmlElement)
 
   }
-  def getSiblings(): Seq[HtmlElementLike] = {
+  def siblings: Seq[HtmlElement] = {
     Seq.concat(
       element.findElements(By.xpath("preceding-sibling::*")),
       element.findElements(By.xpath(s"following-sibling::*"))
     ).map(e => e:HtmlElement)
   }
-  def getSiblings(filter: By): Seq[HtmlElement] = {
+  def siblings(filter: By): Seq[HtmlElement] = {
     Seq.concat(
       element.findElements(By.xpath("preceding-sibling::*")),
       element.findElements(By.xpath(s"following-sibling::*"))
     ).map(e => e:HtmlElement)
   }
-  def getNextSibling(n: Int = 1): Option[HtmlElement] = Option(
+  def nextSibling: Option[HtmlElement] = nextSibling(1)
+  def nextSibling(n:Int): Option[HtmlElement] = Option(
     element.findElement(By.xpath(s"following-sibling::*[$n]"))
   )
-  def getBeforeSibling(n: Int = 1): Option[HtmlElement] = Option(
+  def beforeSibling: Option[HtmlElement] = beforeSibling(1)
+  def beforeSibling(n: Int): Option[HtmlElement] = Option(
     element.findElement(By.xpath(s"preceding-sibling::*[$n]"))
   ) 
   
@@ -56,9 +58,9 @@ trait HtmlElementLike {
     driver.asInstanceOf[JavascriptExecutor].executeScript(code, element)
   }
 
-  def getText(): String = element.getText
-  def getAttribute(key: String): Option[String] = Option(element.getAttribute(key))
-  def getTagName(): String = element.getTagName
+  def text: String = element.getText
+  def attribute(key: String): Option[String] = Option(element.getAttribute(key))
+  def tagName: String = element.getTagName
   def insert(value: String) = element.sendKeys(value)
   def click() = element.click
   def submit() = element.submit

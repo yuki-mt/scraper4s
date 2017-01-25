@@ -5,7 +5,7 @@ import org.openqa.selenium.{WebElement, WebDriver, JavascriptExecutor}
 
 class ATagElement(val element: WebElement) extends HtmlElementLike {
   def openInNewWindow()(implicit driver: WebDriver): Window = {
-    val code = s"window.open('${getUrl}');"
+    val code = s"window.open('$url');"
     driver.asInstanceOf[JavascriptExecutor].executeScript(code)
     Window(driver.getWindowHandle)
   }
@@ -15,5 +15,5 @@ class ATagElement(val element: WebElement) extends HtmlElementLike {
     driver.asInstanceOf[JavascriptExecutor].executeScript(code, element)
   }
 
-  def getUrl(): Option[String] = getAttribute("href")
+  def url: Option[String] = attribute("href")
 }

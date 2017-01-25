@@ -9,13 +9,12 @@ class FormElement(val element: WebElement) extends HtmlElementLike {
     driver.asInstanceOf[JavascriptExecutor].executeScript(code, element)
   }
 
-  def getUrl(): Option[String] = getAttribute("action")
+  def url: Option[String] = attribute("action")
 
   def setQueryString(param: Map[String, String])(implicit driver: WebDriver): Unit = {
     val queryString = param.map{
       case (key, value) => s"$key=$value"
     }.mkString("&")
-    val url = getUrl
     val connector = 
       if (url contains "?") "&"
       else "?"
