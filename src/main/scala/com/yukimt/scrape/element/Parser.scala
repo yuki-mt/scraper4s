@@ -5,7 +5,7 @@ import org.openqa.selenium.{By, WebElement, WebDriver}
 import collection.JavaConversions._
 import Implicit._
 
-class HtmlParser(driver: WebDriver) {
+class Parser(driver: WebDriver) {
   def findElement(by: By): Option[HtmlElement] = {
     Option(driver.findElement(by))
   }

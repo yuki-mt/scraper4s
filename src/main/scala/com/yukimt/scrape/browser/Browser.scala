@@ -6,11 +6,11 @@ import scala.concurrent.duration.FiniteDuration
 import org.openqa.selenium.{WebDriver, Cookie, By, JavascriptExecutor}
 import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
 import java.util.UUID
-import com.yukimt.scrape.element.HtmlParser
+import com.yukimt.scrape.element.{Parser, Element, HtmlElement}
 
 trait Browser {
   protected def driver: WebDriver // make it protected because WebDriver is mutable
-  lazy val parser = new HtmlParser(driver)
+  lazy val parser = new Parser(driver)
   def url: String
   def proxy: Option[ProxyServer]
   def timeout: FiniteDuration
@@ -108,22 +108,33 @@ trait Browser {
     this
   }
   
-  /************Response Header***********/
-  def getResponseHeader(): Map[String, String]
-  def getStatusCode():Option[Int]
-
-
   /************Parse***********/
-  def parse(f: HtmlParser => Any): Browser = {
-    getByParse(f)
+  def parse(f: Parser => Any): Browser = {
+    implicit val _driver: WebDriver = driver
+    f(parser)
     this
   }
-  def getByParse[T](f: HtmlParser => T): T = {
+  def extract(f: Parser => Element): Element = {
     implicit val _driver: WebDriver = driver
     f(parser)
   }
+  def extract(f: Parser => Iterable[Element]): Iterable[Element] = {
+    implicit val _driver: WebDriver = driver
+    f(parser)
+  }
+  def extract(f: Parser => HtmlElement): Element = {
+    implicit val _driver: WebDriver = driver
+    f(parser).toElement
+  }
+  def extract(f: Parser => Iterable[HtmlElement]): Iterable[Element] = {
+    implicit val _driver: WebDriver = driver
+    f(parser).map(_.toElement)
+  }
 
-  def takeScreenshot(path: String, viewpoint: ViewPoint): Browser
+  /************Response Header***********/
+  def getResponseHeader(): Map[String, String]
+  def getStatusCode(): Int
+
 
   def getTitle() = driver.getTitle
   def getBody() = driver.getPageSource
@@ -133,4 +144,6 @@ trait Browser {
   protected def getValue(duration: FiniteDuration): Int = {
     duration.toString.split(' ').head.toInt
   }
+
+  def takeScreenshot(path: String, viewpoint: ViewPoint): Browser
 }

@@ -11,16 +11,5 @@ class FormElement(val element: WebElement) extends HtmlElementLike {
 
   def url: Option[String] = attr("action")
 
-  def setQueryString(param: Map[String, String])(implicit driver: WebDriver): Unit = {
-    val queryString = param.map{
-      case (key, value) => s"$key=$value"
-    }.mkString("&")
-    val connector = 
-      if (url contains "?") "&"
-      else "?"
-    val newUrl = url + connector + queryString
-    setUrl(newUrl)
-  }
-
   def submit(): Unit = element.submit
 }
