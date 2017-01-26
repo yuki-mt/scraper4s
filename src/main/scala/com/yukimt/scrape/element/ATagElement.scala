@@ -15,5 +15,5 @@ class ATagElement(val element: WebElement) extends HtmlElementLike {
     driver.asInstanceOf[JavascriptExecutor].executeScript(code, element)
   }
 
-  def url: Option[String] = attribute("href")
+  def url: Option[String] = attr("href")
 }

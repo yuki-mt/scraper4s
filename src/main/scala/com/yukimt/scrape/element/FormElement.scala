@@ -9,7 +9,7 @@ class FormElement(val element: WebElement) extends HtmlElementLike {
     driver.asInstanceOf[JavascriptExecutor].executeScript(code, element)
   }
 
-  def url: Option[String] = attribute("action")
+  def url: Option[String] = attr("action")
 
   def setQueryString(param: Map[String, String])(implicit driver: WebDriver): Unit = {
     val queryString = param.map{
