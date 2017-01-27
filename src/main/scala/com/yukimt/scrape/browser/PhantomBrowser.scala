@@ -14,7 +14,8 @@ class PhantomBrowser(
   val proxy: Option[ProxyServer] = None,
   val timeout: FiniteDuration = 10 seconds,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
-  val customHeaders: Map[String, String] = Map.empty) extends Browser {
+  val customHeaders: Map[String, String] = Map.empty)
+  extends Browser[PhantomBrowser] {
 
 
   /************Set up***********/
@@ -31,15 +32,6 @@ class PhantomBrowser(
   protected val driver = new PhantomJSDriver(cap)
   driver.manage.timeouts.implicitlyWait(getValue(timeout), timeout.unit)
   driver.get(url)
-
-  /************Response Header***********/
-  def getResponseHeader() = {
-    throw new RuntimeException("'getResponseHeader' is not implemented in UnitBrowser")
-  }
-  def getStatusCode() = {
-    throw new RuntimeException("'getStatusCode' is not implemented in UnitBrowser")
-  }
-
 
   def takeScreenshot(path: String, viewpoint: ViewPoint) = {
     driver.manage.window.setSize(viewpoint.toDemension)

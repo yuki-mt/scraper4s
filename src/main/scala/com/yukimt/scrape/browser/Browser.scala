@@ -5,11 +5,12 @@ import collection.JavaConversions._
 import scala.concurrent.duration.FiniteDuration
 import org.openqa.selenium.{WebDriver, Cookie, By, JavascriptExecutor}
 import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
-import java.util.UUID
 import com.yukimt.scrape.element.{Parser, Element, HtmlElement}
 
-trait Browser {
-  protected def driver: WebDriver // make it protected because WebDriver is mutable
+trait Browser[S] {
+  implicit def browserToS(b: Browser[S]): S = b.asInstanceOf[S]
+
+  protected driver: WebDriver // make it protected because WebDriver is mutable
   lazy val parser = new Parser(driver)
   def url: String
   def proxy: Option[ProxyServer]
@@ -18,16 +19,16 @@ trait Browser {
   def customHeaders: Map[String, String]
   
   /************Cookie***********/
-  def addCookie(key: String, value: String): Browser = {
+  def addCookie(key: String, value: String): S = {
     driver.manage.addCookie(new Cookie(key, value))
     this
   }
-  def removeCookie(key: String): Browser = {
+  def removeCookie(key: String): S = {
     val c = driver.manage.getCookieNamed("key")
     driver.manage.deleteCookie(c)
     this
   }
-  def clearCookie(): Browser = {
+  def clearCookie(): S = {
     driver.manage.deleteAllCookies
     this
   }
@@ -39,22 +40,22 @@ trait Browser {
   }
   
   /************wait***********/
-  def waitUntilLoaded(path: By, maxTimeout: FiniteDuration):Browser = {
+  def waitUntilLoaded(path: By, maxTimeout: FiniteDuration): S = {
     new WebDriverWait(driver, maxTimeout.toSeconds)
       .until(ExpectedConditions.presenceOfElementLocated(path))
     this
   }
-  def wait(timeout: FiniteDuration): Browser = {
+  def wait(timeout: FiniteDuration): S = {
     driver.manage.timeouts.pageLoadTimeout(getValue(timeout), timeout.unit)
     this
   }
 
   /************Window***********/
-  def inAllWindows(f: Browser => Any): Browser = {
+  def inAllWindows(f: Browser[S] => Any): S = {
     getFromAllWindows(f)
     this
   }
-  def getFromAllWindows[T](f: Browser => T): Seq[T] = {
+  def getFromAllWindows[T](f: Browser[S] => T): Seq[T] = {
     val currentWindow = driver.getWindowHandle
     //FIXME: wish f is executed asyncronously in each window
     val result = driver.getWindowHandles.toSeq.map{ window =>
@@ -64,18 +65,18 @@ trait Browser {
     driver.switchTo.window(currentWindow)
     result
   }
-  def withWindow(window: Window)(f: Browser => Any): Browser = {
+  def withWindow(window: Window)(f: Browser[S] => Any): S = {
     getFromWindow(window)(f)
     this
   }
-  def getFromWindow[T](window: Window)(f: Browser => T): T = {
+  def getFromWindow[T](window: Window)(f: Browser[S] => T): T = {
     val currentWindow = driver.getWindowHandle
     driver.switchTo.window(window.id)
     val result = f(this)
     driver.switchTo.window(currentWindow)
     result
   }
-  def switchWindow(window: Window): Browser = {
+  def switchWindow(window: Window): S = {
     driver.switchTo.window(window.id)
     this
   }
@@ -89,7 +90,7 @@ trait Browser {
   }
 
   /************Javascript***********/
-  def executeJs(code: String): Browser = {
+  def executeJs(code: String): S = {
     getJsExecutionResult(code)
     this
   }
@@ -99,42 +100,28 @@ trait Browser {
   }
 
   /************Histroy***********/
-  def back(n: Int = 1): Browser = {
+  def back: S = back(1)
+  def back(n: Int): S = {
     (1 to n).foreach(_ => driver.navigate.back)
     this
   }
-  def forward(n: Int = 1): Browser = {
+  def forward(n: Int): S = {
     (1 to n).foreach(_ => driver.navigate.forward)
     this
   }
+  def forward: S = forward(1)
   
   /************Parse***********/
-  def parse(f: Parser => Any): Browser = {
-    implicit val _driver: WebDriver = driver
+  def parse(f: Parser => Any): S = {
     f(parser)
     this
   }
-  def extract(f: Parser => Element): Element = {
-    implicit val _driver: WebDriver = driver
-    f(parser)
-  }
-  def extract(f: Parser => Iterable[Element]): Iterable[Element] = {
-    implicit val _driver: WebDriver = driver
-    f(parser)
-  }
   def extract(f: Parser => HtmlElement): Element = {
-    implicit val _driver: WebDriver = driver
     f(parser).toElement
   }
   def extract(f: Parser => Iterable[HtmlElement]): Iterable[Element] = {
-    implicit val _driver: WebDriver = driver
     f(parser).map(_.toElement)
   }
-
-  /************Response Header***********/
-  def getResponseHeader(): Map[String, String]
-  def getStatusCode(): Int
-
 
   def getTitle() = driver.getTitle
   def getBody() = driver.getPageSource
@@ -144,6 +131,4 @@ trait Browser {
   protected def getValue(duration: FiniteDuration): Int = {
     duration.toString.split(' ').head.toInt
   }
-
-  def takeScreenshot(path: String, viewpoint: ViewPoint): Browser
 }

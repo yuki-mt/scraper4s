@@ -8,7 +8,8 @@ class UnitBrowser(
   val proxy: Option[ProxyServer] = None,
   val timeout: FiniteDuration = 10 seconds,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
-  val customHeaders: Map[String, String] = Map.empty) extends Browser {
+  val customHeaders: Map[String, String] = Map.empty)
+  extends Browser[UnitBrowser] {
 
   protected val driver = new FixedHtmlUnitDriver(proxy)
 
@@ -25,9 +26,4 @@ class UnitBrowser(
   /************Response Header***********/
   def getResponseHeader() = driver.headers
   def getStatusCode() = driver.statusCode
-
-
-  def takeScreenshot(path: String, viewpoint: ViewPoint) = {
-    throw new RuntimeException("'takeScreenshot' is not implemented in UnitBrowser")
-  }
 }
