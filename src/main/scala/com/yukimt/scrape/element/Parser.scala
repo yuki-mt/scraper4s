@@ -1,7 +1,7 @@
 package com.yukimt.scrape
 package element
 
-import org.openqa.selenium.{By, WebElement, WebDriver}
+import org.openqa.selenium.{By, WebDriver}
 import collection.JavaConversions._
 import Implicit._
 

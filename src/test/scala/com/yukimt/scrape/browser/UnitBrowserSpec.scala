@@ -15,11 +15,11 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
     "set headers" in {
       val browser = new UnitBrowser(
         "http://localhost:3000",
-        userAgent = new UserAgent(Device.Mac, BrowserType.Firefox),
+        userAgent = UserAgent(Device.Mac, BrowserType.Firefox),
         customHeaders = Map("X-My-Header" -> "hogefuga")
       )
 
-      val result = JsonMethods.parse(browser.getBody.replaceAll("<.+>", "")).asInstanceOf[JObject].values
+      val result = JsonMethods.parse(browser.body.replaceAll("<.+>", "")).asInstanceOf[JObject].values
       val headers = result("headers").asInstanceOf[Map[String, String]]
       
       headers("user-agent") === "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10; rv:33.0) Gecko/20100101 Firefox/33.0"
@@ -28,14 +28,14 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
 
     "get response header" in {
       val browser = new UnitBrowser("http://localhost:3000/notfound")
-      browser.getResponseHeader()("Content-Type") === "text/html; charset=utf-8"
-      browser.getStatusCode === Some(404)
+      browser.responseHeaders("Content-Type") === "text/html; charset=utf-8"
+      browser.statusCode === 404
     }
 
     "execute javascript" in {
       val browser = new UnitBrowser("http://localhost:3000/view")
-      browser.getJsExecutionResult("return navigator.cookieEnabled;") === true
-      val result = browser.executeJs("myVariable += 10;").getJsExecutionResult("return myVariable;")
+      browser.executeJsWithResult("return navigator.cookieEnabled;") === true
+      val result = browser.executeJs("myVariable += 10;").executeJsWithResult("return myVariable;")
       result === 130
     }
     
@@ -44,17 +44,17 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
 
       browser.addCookie("hoge", "fuga")
       browser.addCookie("scrape", "4s")
-      browser.getCookies === Map("hoge"->"fuga", "scrape" -> "4s")
-      browser.getJsExecutionResult("return document.cookie;") === "hoge=fuga; scrape=4s"
-      browser.getCookie("hoge") === Some("fuga")
-      browser.getCookie("hakushu") === None
-      browser.clearCookie.getCookies === Map.empty
+      browser.cookies === Map("hoge"->"fuga", "scrape" -> "4s")
+      browser.executeJsWithResult("return document.cookie;") === "hoge=fuga; scrape=4s"
+      browser.cookie("hoge") === Some("fuga")
+      browser.cookie("hakushu") === None
+      browser.clearCookie.cookies === Map.empty
     }
 
     "get title and url" in {
       val browser = new UnitBrowser("http://localhost:3000/view")
-      browser.getTitle === "Express Sample Title"
-      browser.getCurrentUrl === "http://localhost:3000/view"
+      browser.title === "Express Sample Title"
+      browser.currentUrl === "http://localhost:3000/view"
     }
   }
 }

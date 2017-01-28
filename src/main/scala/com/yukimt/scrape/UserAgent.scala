@@ -1,5 +1,9 @@
 package com.yukimt.scrape
 
+object UserAgent {
+  def apply(value: String) = new UserAgent(value)
+  def apply(device: Device, browserType: BrowserType) = new UserAgent(device, browserType)
+}
 class UserAgent(value: String){ 
   def this(device: Device, browserType: BrowserType){
     this{

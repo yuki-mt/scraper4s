@@ -7,7 +7,7 @@ organization := "com.yukimt"
 
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "2.4.17" % "test",
-  "org.json4s" %% "json4s-jackson" % "3.3.0" % "test",
+  "org.json4s" %% "json4s-jackson" % "3.3.0",
   "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.42.2",
   "com.github.detro.ghostdriver" % "phantomjsdriver" % "1.1.0"
 )

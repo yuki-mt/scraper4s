@@ -3,21 +3,12 @@ package browser
 
 import scala.concurrent.duration._
 import org.openqa.selenium.phantomjs.{PhantomJSDriver, PhantomJSDriverService}
-import collection.JavaConversions._
 import org.openqa.selenium.remote.DesiredCapabilities
 import java.io.File
 import org.openqa.selenium.OutputType
 import org.apache.commons.io.FileUtils
 
-class PhantomBrowser(
-  val url: String,
-  val proxy: Option[ProxyServer] = None,
-  val timeout: FiniteDuration = 10 seconds,
-  val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
-  val customHeaders: Map[String, String] = Map.empty)
-  extends Browser[PhantomBrowser] {
-
-
+trait PhantomBrowserLike extends Browser[PhantomBrowserLike] {
   /************Set up***********/
   val cap = DesiredCapabilities.phantomjs
   customHeaders.foreach{
@@ -40,3 +31,11 @@ class PhantomBrowser(
     this
   }
 }
+
+class PhantomBrowser(
+  val url: String,
+  val proxy: Option[ProxyServer] = None,
+  val timeout: FiniteDuration = 10 seconds,
+  val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
+  val customHeaders: Map[String, String] = Map.empty)
+  extends PhantomBrowserLike with WindowManager[PhantomBrowserLike]

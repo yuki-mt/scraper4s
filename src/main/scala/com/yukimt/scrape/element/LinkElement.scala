@@ -1,10 +1,10 @@
 package com.yukimt.scrape
 package element
 
-import org.openqa.selenium.{WebElement, WebDriver}
+import org.openqa.selenium.WebDriver
 
 trait LinkElement extends HtmlElementLike {
-  def setUrl(newUrl: String)(implicit driver: WebDriver): Unit
+  def setUri(newUri: String)(implicit driver: WebDriver): Unit
   def url: Option[String]
 
   def setQueryString(param: Map[String, String])(implicit driver: WebDriver): Unit = {
@@ -16,7 +16,7 @@ trait LinkElement extends HtmlElementLike {
         if (_url contains "?") "&"
         else "?"
       val newUrl = _url + connector + queryString
-      setUrl(newUrl)
+      setUri(newUrl)
     }
   }
 }
