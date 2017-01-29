@@ -4,7 +4,6 @@ package browser
 import collection.JavaConversions._
 import scala.concurrent.duration.FiniteDuration
 import org.openqa.selenium.{WebDriver, Cookie, By, JavascriptExecutor}
-import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
 import com.yukimt.scrape.element.{Parser, Element, HtmlElement}
 
 trait Browser[S] {
@@ -14,7 +13,6 @@ trait Browser[S] {
   lazy val parser = new Parser(driver)
   def url: String
   def proxy: Option[ProxyServer]
-  def timeout: FiniteDuration
   def userAgent: UserAgent
   def customHeaders: Map[String, String]
   
@@ -39,17 +37,6 @@ trait Browser[S] {
     Option(driver.manage.getCookieNamed(key)).map(_.getValue)
   }
   
-  /************wait***********/
-  def waitUntilLoaded(path: By, maxTimeout: FiniteDuration): S = {
-    new WebDriverWait(driver, maxTimeout.toSeconds)
-      .until(ExpectedConditions.presenceOfElementLocated(path))
-    this
-  }
-  def wait(timeout: FiniteDuration): S = {
-    driver.manage.timeouts.pageLoadTimeout(getValue(timeout), timeout.unit)
-    this
-  }
-
   /************Javascript***********/
   def executeJs(code: String): S = {
     executeJsWithResult(code)
@@ -89,8 +76,4 @@ trait Browser[S] {
   def body = driver.getPageSource
   def currentUrl = driver.getCurrentUrl
   def quit = driver.quit
-
-  protected def getValue(duration: FiniteDuration): Int = {
-    duration.toString.split(' ').head.toInt
-  }
 }

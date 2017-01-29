@@ -21,7 +21,6 @@ trait PhantomBrowserLike extends Browser[PhantomBrowser] {
     cap.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, arg)
   }
   protected val driver = new PhantomJSDriver(cap)
-  driver.manage.timeouts.implicitlyWait(getValue(timeout), timeout.unit)
   driver.get(url)
 
   def takeScreenshot(path: String, viewpoint: ViewPoint) = {
@@ -35,7 +34,6 @@ trait PhantomBrowserLike extends Browser[PhantomBrowser] {
 class PhantomBrowser(
   val url: String,
   val proxy: Option[ProxyServer] = None,
-  val timeout: FiniteDuration = 10 seconds,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
   val customHeaders: Map[String, String] = Map.empty)
   extends PhantomBrowserLike with WindowManager[PhantomBrowserLike, PhantomBrowser]

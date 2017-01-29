@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 import element.ParserMethod._
 import element.ElementMethod._
 
-//TODO: wait, proxy test is not done yet
+//TODO: proxy test is not done yet
 class UnitBrowserSpec extends Specification with NoTimeConversions{
   sequential
 
