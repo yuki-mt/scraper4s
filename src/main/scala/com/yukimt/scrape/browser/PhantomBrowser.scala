@@ -8,7 +8,7 @@ import java.io.File
 import org.openqa.selenium.OutputType
 import org.apache.commons.io.FileUtils
 
-trait PhantomBrowserLike extends Browser[PhantomBrowserLike] {
+trait PhantomBrowserLike extends Browser[PhantomBrowser] {
   /************Set up***********/
   val cap = DesiredCapabilities.phantomjs
   customHeaders.foreach{
@@ -38,4 +38,4 @@ class PhantomBrowser(
   val timeout: FiniteDuration = 10 seconds,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
   val customHeaders: Map[String, String] = Map.empty)
-  extends PhantomBrowserLike with WindowManager[PhantomBrowserLike]
+  extends PhantomBrowserLike with WindowManager[PhantomBrowserLike, PhantomBrowser]

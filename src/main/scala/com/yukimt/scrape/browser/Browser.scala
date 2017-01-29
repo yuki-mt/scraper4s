@@ -60,30 +60,23 @@ trait Browser[S] {
     driver.asInstanceOf[JavascriptExecutor].executeScript(code)
   }
 
-  /************Histroy***********/
-  def back: S = back(1)
-  def back(n: Int): S = {
-    (1 to n).foreach(_ => driver.navigate.back)
-    this
-  }
-  def forward(n: Int): S = {
-    (1 to n).foreach(_ => driver.navigate.forward)
-    this
-  }
-  def forward: S = forward(1)
-  
   /************Parse***********/
   def parse(f: Parser => Any): S = {
+    implicit val _driver = driver
     f(parser)
     this
   }
-  def extract(f: Parser => HtmlElement): Element = {
-    implicit val _driver = driver
-    f(parser).toElement
-  }
-  def extract(f: Parser => Iterable[HtmlElement]): Iterable[Element] = {
-    implicit val _driver = driver
+  def extract(f: Parser => Option[HtmlElement]): Option[Element] = {
     f(parser).map(_.toElement)
+  }
+  def extracts(f: Parser => Iterable[HtmlElement]): Iterable[Element] = {
+    f(parser).map(_.toElement)
+  }
+  def extractWindow(f: Parser => Option[Window]): Option[Window] = {
+    f(parser)
+  }
+  def extractWindows(f: Parser => Iterable[Window]): Iterable[Window] = {
+    f(parser)
   }
 
   def title = driver.getTitle

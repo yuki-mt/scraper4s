@@ -6,6 +6,7 @@ import collection.JavaConversions._
 import Implicit._
 
 class Parser(driver: WebDriver) {
+  implicit val _driver = driver
   def findElement(by: By): Option[HtmlElement] = {
     Option(driver.findElement(by))
   }

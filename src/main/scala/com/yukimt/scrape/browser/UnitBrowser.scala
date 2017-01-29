@@ -3,7 +3,7 @@ package browser
 
 import scala.concurrent.duration._
 
-trait UnitBrowserLike extends Browser[UnitBrowserLike] {
+trait UnitBrowserLike extends Browser[UnitBrowser] {
 
   protected val driver = new FixedHtmlUnitDriver(proxy)
 
@@ -28,4 +28,4 @@ class UnitBrowser(
   val timeout: FiniteDuration = 10 seconds,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
   val customHeaders: Map[String, String] = Map.empty)
-  extends UnitBrowserLike with WindowManager[UnitBrowserLike]
+  extends UnitBrowserLike with WindowManager[UnitBrowserLike, UnitBrowser]

@@ -1,13 +1,11 @@
 package com.yukimt.scrape
 package element
 
-import org.openqa.selenium.WebDriver
-
 trait LinkElement extends HtmlElementLike {
-  def setUri(newUri: String)(implicit driver: WebDriver): Unit
+  def setUri(newUri: String): Unit
   def url: Option[String]
 
-  def setQueryString(param: Map[String, String])(implicit driver: WebDriver): Unit = {
+  def setQueryString(param: Map[String, String]): Unit = {
     val queryString = param.map{
       case (key, value) => s"$key=$value"
     }.mkString("&")

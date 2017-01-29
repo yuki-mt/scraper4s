@@ -7,7 +7,7 @@ import org.json4s.JObject
 import org.json4s.jackson.JsonMethods
 import scala.concurrent.duration._
 
-//TODO: window, wait, history, addHeader, proxy test is not done yet
+//TODO: wait, proxy test is not done yet
 class UnitBrowserSpec extends Specification with NoTimeConversions{
   sequential
 
@@ -55,6 +55,80 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
       val browser = new UnitBrowser("http://localhost:3000/view")
       browser.title === "Express Sample Title"
       browser.currentUrl === "http://localhost:3000/view"
+    }
+
+    "history" in {
+      val url = "http://localhost:3000/"
+      val viewUrl = url + "view"
+      val browser = new UnitBrowser(viewUrl)
+      browser.currentUrl === viewUrl
+      browser.parse(p => p.findElement("a").foreach(_.click)).currentUrl === url
+      browser.back.currentUrl === viewUrl
+      browser.forward.currentUrl === url
+    }
+
+    "extract" in {
+      val browser = new UnitBrowser("http://localhost:3000/view")
+      val res = browser.extracts{ p =>
+        p.findElement("ul").toSeq.flatMap(_.children)
+      }
+      res.map(_.text) === Seq("list1", "list2", "list3")
+    }
+
+    "get from all window" in {
+      val browser = new UnitBrowser("http://localhost:3000/view")
+      val res = browser.parse{ p =>
+        for {
+          tag <- p.findElement("a")
+          aTag <- tag.asATagElement
+        } yield {
+          aTag.openInNewWindow
+          aTag.openInNewWindow
+        }
+      }.getFromAllWindows(_.title)
+      res.filter(_ == "Express Sample Title").length === 1
+      res.filter(_.isEmpty).length === 2
+    }
+
+    "get from window" in {
+      val browser = new UnitBrowser("http://localhost:3000/view")
+      val title = "Express Sample Title"
+      val window = browser.extractWindow{ p =>
+        for {
+          tag <- p.findElement("a")
+          aTag <- tag.asATagElement
+        } yield {
+          aTag.openInNewWindow
+        }
+      }.get
+      browser.title === title
+      browser.getFromWindow(window)(_.title) === ""
+      browser.title === title
+    }
+
+    "switch window" in {
+      val browser = new UnitBrowser("http://localhost:3000/view")
+      val title = "Express Sample Title"
+      val window = browser.extractWindow{ p =>
+        for {
+          tag <- p.findElement("a")
+          aTag <- tag.asATagElement
+        } yield {
+          aTag.openInNewWindow
+        }
+      }.get
+      browser.title === title
+      browser.switch(window).title === ""
+      browser.title === ""
+    }
+
+    "duplicate window" in {
+      val browser = new UnitBrowser("http://localhost:3000/view")
+      val currentWindow = browser.currentWindow
+      val window = browser.depulicateWindow()
+      currentWindow !== window
+      browser.title === browser.getFromWindow(window)(_.title)
+      browser.body === browser.getFromWindow(window)(_.body)
     }
   }
 }

@@ -4,8 +4,11 @@ package element
 import org.openqa.selenium.{WebElement, WebDriver, JavascriptExecutor}
 import collection.JavaConversions._
 
-class ATagElement(val element: WebElement) extends LinkElement {
-  def openInNewWindow(implicit driver: WebDriver): Window = {
+class ATagElement(protected val element: WebElement)
+  (protected implicit val driver: WebDriver)
+  extends LinkElement {
+
+  def openInNewWindow: Window = {
     val oldWindows = driver.getWindowHandles
     val code = s"window.open('$url');"
     driver.asInstanceOf[JavascriptExecutor].executeScript(code)
@@ -13,7 +16,7 @@ class ATagElement(val element: WebElement) extends LinkElement {
     Window(newId)
   }
 
-  def setUri(newUri: String)(implicit driver: WebDriver): Unit = {
+  def setUri(newUri: String): Unit = {
     val code = s"arguments[0].setAttribute('href', '$newUri');"
     driver.asInstanceOf[JavascriptExecutor].executeScript(code, element)
   }

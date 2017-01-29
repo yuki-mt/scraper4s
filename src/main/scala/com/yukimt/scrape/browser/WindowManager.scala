@@ -3,15 +3,15 @@ package browser
 
 import collection.JavaConversions._
 
-trait WindowManager[S] {
-  self: Browser[S] =>
+trait WindowManager[S, T <: S] {
+  self: Browser[T] =>
 
-  def inAllWindows(f: S => Any): S = {
+  def inAllWindows(f: S => Any): T = {
     getFromAllWindows(f)
     this
   }
 
-  def getFromAllWindows[T](f: S => T): Seq[T] = {
+  def getFromAllWindows[U](f: S => U): Seq[U] = {
     val currentWindow = driver.getWindowHandle
     //FIXME: wish f is executed asyncronously in each window
     val result = driver.getWindowHandles.toSeq.map{ window =>
@@ -22,12 +22,12 @@ trait WindowManager[S] {
     result
   }
 
-  def withWindow(window: Window)(f: S => Any): S = {
+  def withWindow(window: Window)(f: S => Any): T = {
     getFromWindow(window)(f)
     this
   }
 
-  def getFromWindow[T](window: Window)(f: S => T): T = {
+  def getFromWindow[U](window: Window)(f: S => U): U = {
     val currentWindow = driver.getWindowHandle
     driver.switchTo.window(window.id)
     val result = f(this)
@@ -35,7 +35,7 @@ trait WindowManager[S] {
     result
   }
 
-  def switchWindow(window: Window): S = {
+  def switch(window: Window): T = {
     driver.switchTo.window(window.id)
     this
   }
@@ -44,8 +44,24 @@ trait WindowManager[S] {
     Window(driver.getWindowHandle)
   }
 
-  def depulicateCurrentWindow: Window = {
+  def depulicateWindow(swtichToNewWindow: Boolean = false): Window = {
+    val oldWindows = driver.getWindowHandles
     executeJs(s"window.open('$currentUrl');")
-    currentWindow
+    val newWindow = Window((driver.getWindowHandles -- oldWindows).head)
+    if(swtichToNewWindow)
+      switch(newWindow)
+    newWindow
   }
+
+  /************Histroy***********/
+  def back: T = back(1)
+  def back(n: Int): T = {
+    (1 to n).foreach(_ => driver.navigate.back)
+    this
+  }
+  def forward(n: Int): T = {
+    (1 to n).foreach(_ => driver.navigate.forward)
+    this
+  }
+  def forward: T = forward(1)
 }
