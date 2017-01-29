@@ -5,3 +5,4 @@
 /project/target/
 /target/
 /src/test/js/node_modules/
+phantomjsdriver.log
