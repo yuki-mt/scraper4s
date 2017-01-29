@@ -3,20 +3,34 @@ package element
 
 import org.openqa.selenium.{By, WebDriver}
 import collection.JavaConversions._
-import Implicit._
 
 class Parser(driver: WebDriver) {
-  implicit val _driver = driver
-  def findElement(by: By): Option[HtmlElement] = {
-    Option(driver.findElement(by))
+  def getFirst(method:ParserMethod): HtmlElement = method(driver).head
+  def tryFirst(method:ParserMethod): Option[HtmlElement] = {
+    try {
+      method(driver).headOption
+    } catch {
+      case e: Throwable =>
+        println(e.getMessage)
+        None
+    }
   }
-  def findElements(by: By): Seq[HtmlElement] = {
-    driver.findElements(by).map(e => e:HtmlElement)
+  def getAll(method:ParserMethod): Iterable[HtmlElement] = method(driver)
+  def >>(method:ParserMethod) = getFirst(method)
+  def >?>(method:ParserMethod) = tryFirst(method)
+  def >>>(method:ParserMethod) = getAll(method)
+
+}
+
+object ParserMethod{
+  def by(b: By): ParserMethod = {
+    val method = (_b: By, driver: WebDriver) =>
+      driver.findElements(_b).map(e => new HtmlElement(e, driver))
+    method(b, _)
   }
-  def findElement(cssQuery: String): Option[HtmlElement] = {
-    Option(driver.findElement(By.cssSelector(cssQuery)))
-  }
-  def findElements(cssQuery: String): Seq[HtmlElement] = {
-    driver.findElements(By.cssSelector(cssQuery)).map(e => e:HtmlElement)
+  def css(cssQuery: String): ParserMethod = {
+    val method = (query: String, driver: WebDriver) =>
+      driver.findElements(By.cssSelector(query)).map(e => new HtmlElement(e, driver))
+    method(cssQuery, _)
   }
 }

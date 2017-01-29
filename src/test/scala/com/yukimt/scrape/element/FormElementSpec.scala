@@ -4,18 +4,20 @@ import org.specs2.mutable.Specification
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.json4s.JObject
 import org.json4s.jackson.JsonMethods
+import ParserMethod._
+import ElementMethod._
 
 class FormElementSpec extends Specification{
   sequential
   implicit val driver = new HtmlUnitDriver(true)
   driver.get("http://localhost:3000/view")
   val parser = new Parser(driver)
-  var element = parser.findElement("form").get.asFormElement.get
+  var element = (parser >> css("form")) >> asForm
 
   "FormElement" should {
     "set query string" in {
       element.setQueryString(Map("a"->"b", "c"->"d"))
-      element.url === Some("/form?a=b&c=d")
+      element >> url === "/form?a=b&c=d"
     }
 
     "submit" in {
@@ -26,7 +28,7 @@ class FormElementSpec extends Specification{
 
     "add form data" in {
       driver.navigate.back
-      element = parser.findElement("form").get.asFormElement.get
+      element = (parser >> css("form")) >> asForm
       driver.getTitle === "Express Sample Title"
       element.addFormData("abc", "def")
       element.submit
@@ -37,9 +39,9 @@ class FormElementSpec extends Specification{
 
     "set uri" in {
       driver.navigate.back
-      element = parser.findElement("form").get.asFormElement.get
+      element = (parser >> css("form")) >> asForm
       element.setUri("/abc")
-      element.url === Some("/abc")
+      element >> url === "/abc"
     }
   }
 }

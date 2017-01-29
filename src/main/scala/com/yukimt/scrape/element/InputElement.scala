@@ -1,19 +1,10 @@
 package com.yukimt.scrape.element
 
 import org.openqa.selenium.InvalidSelectorException
+import org.openqa.selenium.support.ui.Select
 
 trait InputElement {
   self: HtmlElementLike =>
-
-  def parentForm: Option[FormElement] = 
-    tryToGetParantForm(this).flatMap(_.asFormElement)
-
-  protected def tryToGetParantForm(e: HtmlElementLike):Option[HtmlElement] = {
-    e.parent.flatMap{ p =>
-      if(p.tagName == "form") Some(p) 
-      else tryToGetParantForm(p)
-    }
-  }
 
   //type to textbox, textarea, ...
   def typing(value: String) = element.sendKeys(value)
@@ -23,6 +14,11 @@ trait InputElement {
   //check checkbox or radio button
   def check() = click
 
+  protected def selectTag = {
+    if(element.getTagName != "select")
+      throw new InvalidSelectorException(s"${element.getTagName} tag is not supported 'select' method")
+    new Select(element)
+  }
   //select in select tag
   def select(text: String) = selectTag.selectByVisibleText(text)
   def select(index: Int) = selectTag.selectByIndex(index)

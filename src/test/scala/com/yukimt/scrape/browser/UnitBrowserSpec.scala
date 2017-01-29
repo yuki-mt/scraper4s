@@ -6,6 +6,8 @@ import org.specs2.time.NoTimeConversions
 import org.json4s.JObject
 import org.json4s.jackson.JsonMethods
 import scala.concurrent.duration._
+import element.ParserMethod._
+import element.ElementMethod._
 
 //TODO: wait, proxy test is not done yet
 class UnitBrowserSpec extends Specification with NoTimeConversions{
@@ -62,15 +64,15 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
       val viewUrl = url + "view"
       val browser = new UnitBrowser(viewUrl)
       browser.currentUrl === viewUrl
-      browser.parse(p => p.findElement("a").foreach(_.click)).currentUrl === url
+      browser.parse(p => (p >> css("a")).click).currentUrl === url
       browser.back.currentUrl === viewUrl
       browser.forward.currentUrl === url
     }
 
     "extract" in {
       val browser = new UnitBrowser("http://localhost:3000/view")
-      val res = browser.extracts{ p =>
-        p.findElement("ul").toSeq.flatMap(_.children)
+      val res = browser.extracts{ p: element.Parser =>
+        (p >> css("ul")) >>> children
       }
       res.map(_.text) === Seq("list1", "list2", "list3")
     }
@@ -78,13 +80,9 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
     "get from all window" in {
       val browser = new UnitBrowser("http://localhost:3000/view")
       val res = browser.parse{ p =>
-        for {
-          tag <- p.findElement("a")
-          aTag <- tag.asATagElement
-        } yield {
-          aTag.openInNewWindow
-          aTag.openInNewWindow
-        }
+        val aTag = (p >> css("a")) >> asATag
+        aTag.openInNewWindow
+        aTag.openInNewWindow
       }.getFromAllWindows(_.title)
       res.filter(_ == "Express Sample Title").length === 1
       res.filter(_.isEmpty).length === 2
@@ -94,13 +92,9 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
       val browser = new UnitBrowser("http://localhost:3000/view")
       val title = "Express Sample Title"
       val window = browser.extractWindow{ p =>
-        for {
-          tag <- p.findElement("a")
-          aTag <- tag.asATagElement
-        } yield {
-          aTag.openInNewWindow
-        }
-      }.get
+        val aTag = (p >> css("a")) >> asATag
+        aTag.openInNewWindow
+      }
       browser.title === title
       browser.getFromWindow(window)(_.title) === ""
       browser.title === title
@@ -110,13 +104,9 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
       val browser = new UnitBrowser("http://localhost:3000/view")
       val title = "Express Sample Title"
       val window = browser.extractWindow{ p =>
-        for {
-          tag <- p.findElement("a")
-          aTag <- tag.asATagElement
-        } yield {
-          aTag.openInNewWindow
-        }
-      }.get
+        val aTag = (p >> css("a")) >> asATag
+        aTag.openInNewWindow
+      }
       browser.title === title
       browser.switch(window).title === ""
       browser.title === ""

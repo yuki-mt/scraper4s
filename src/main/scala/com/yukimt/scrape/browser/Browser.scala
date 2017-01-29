@@ -66,13 +66,19 @@ trait Browser[S] {
     f(parser)
     this
   }
-  def extract(f: Parser => Option[HtmlElement]): Option[Element] = {
+  def tryExtract(f: Parser => Option[HtmlElement]): Option[Element] = {
     f(parser).map(_.toElement)
+  }
+  def extract(f: Parser => HtmlElement): Element = {
+    f(parser).toElement
   }
   def extracts(f: Parser => Iterable[HtmlElement]): Iterable[Element] = {
     f(parser).map(_.toElement)
   }
-  def extractWindow(f: Parser => Option[Window]): Option[Window] = {
+  def tryExtractWindow(f: Parser => Option[Window]):Option[Window] = {
+    f(parser)
+  }
+  def extractWindow(f: Parser => Window):Window = {
     f(parser)
   }
   def extractWindows(f: Parser => Iterable[Window]): Iterable[Window] = {

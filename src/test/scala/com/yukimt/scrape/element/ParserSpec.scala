@@ -3,6 +3,8 @@ package com.yukimt.scrape.element
 import org.specs2.mutable.Specification
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.{By, WebElement, WebDriver}
+import ParserMethod._
+import ElementMethod._
 
 class ParserSpec extends Specification{
   sequential
@@ -12,12 +14,12 @@ class ParserSpec extends Specification{
 
   "Parser" should {
     "find Elements 'By'" in {
-      parser.findElement(By.xpath("//h1")).get.text === "H1 tag here"
-      parser.findElements(By.xpath("//li")).map(_.text) === Seq("list1", "list2", "list3")
+      (parser >> by(By.xpath("//h1"))) >> innerText === "H1 tag here"
+      (parser >>> by(By.xpath("//li"))).map(_ >> innerText) === Seq("list1", "list2", "list3")
     }
     "find Elements By CSS Query" in {
-      parser.findElement(".c").get.text === "list1"
-      parser.findElements("input[name='fruit']").flatMap(_.attr("value")) === Seq("a", "o", "l")
+      (parser >> css(".c")) >> innerText === "list1"
+      (parser >>> css("input[name='fruit']")).map(_ >> attr("value")) === Seq("a", "o", "l")
     }
   }
 }
