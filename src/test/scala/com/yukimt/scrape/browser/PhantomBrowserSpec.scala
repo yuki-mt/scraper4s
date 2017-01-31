@@ -94,6 +94,12 @@ class PhantomBrowserSpec extends Specification with NoTimeConversions{
       browser.title === title
     }
 
+//    "take screenshot" in {
+//      val browser = new PhantomBrowser("http://localhost:3000/view")
+//      browser.takeScreenshot("~/test.png", ViewPoint.PC)
+//      1 === 1
+//    }
+
     "switch window" in {
       val browser = new PhantomBrowser("http://localhost:3000/view")
       val title = "Express Sample Title"
