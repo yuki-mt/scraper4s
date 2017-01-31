@@ -9,7 +9,6 @@ import scala.concurrent.duration._
 import element.ParserMethod._
 import element.ElementMethod._
 
-//TODO: proxy test is not done yet
 class UnitBrowserSpec extends Specification with NoTimeConversions{
   sequential
 
@@ -122,5 +121,16 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
       browser.title === browser.getFromWindow(window)(_.title)
       browser.body === browser.getFromWindow(window)(_.body)
     }
+
+//    "close alert" in {
+//      val browser = new UnitBrowser("http://localhost:3000/view")
+//      browser.isAlertPresent === false
+//      browser.getFromjs("return msg;") === "nothing"
+//      browser.parse(p => (p >>> css("button")).find(b => (b >> innertext) == "confirm").foreach(_.click))
+//      browser.isAlertPresent === true
+//      browser.getFromJs("return msg;") === "nothing"
+//      browser.closeAlert.isAlertPresent === false
+//      browser.currentUrl === "http://localhost:3000/"
+//    }
   }
 }

@@ -65,6 +65,39 @@ trait Browser[S] {
     f(parser)
   }
 
+  /************Popup***********/
+  def isAlertPresent = {
+    try {
+      driver.switchTo.alert
+      driver.switchTo.defaultContent
+      true
+    } catch {
+      case e: Throwable => false
+    }
+  }
+  def closeAlert = {
+    if(isAlertPresent) {
+      driver.switchTo.alert.accept
+      driver.switchTo.defaultContent
+    }
+    this
+  }
+  def acceptConfirm = closeAlert 
+  def declineConfirm = {
+    if(isAlertPresent) {
+      driver.switchTo.alert.dismiss
+      driver.switchTo.defaultContent
+    }
+    this
+  }
+  def typeToPrompt(msg: String) = {
+    if(isAlertPresent) {
+      driver.switchTo.alert.sendKeys(msg)
+      driver.switchTo.defaultContent
+    }
+    this
+  }
+
   def title = driver.getTitle
   def body = driver.getPageSource
   def currentUrl = driver.getCurrentUrl
