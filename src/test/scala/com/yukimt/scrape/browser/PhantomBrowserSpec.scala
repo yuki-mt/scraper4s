@@ -65,7 +65,7 @@ class PhantomBrowserSpec extends Specification with NoTimeConversions{
 
     "extract" in {
       val browser = new PhantomBrowser("http://localhost:3000/view")
-      val res = browser.extracts{ p: element.Parser =>
+      val res = browser.extractElements{ p: element.Parser =>
         (p >> css("ul")) >>> children
       }
       res.map(_.text) === Seq("list1", "list2", "list3")

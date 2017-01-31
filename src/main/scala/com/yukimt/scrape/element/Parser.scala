@@ -19,7 +19,6 @@ class Parser(driver: WebDriver) {
   def >>(method:ParserMethod) = getFirst(method)
   def >?>(method:ParserMethod) = tryFirst(method)
   def >>>(method:ParserMethod) = getAll(method)
-
 }
 
 object ParserMethod{
@@ -28,6 +27,7 @@ object ParserMethod{
       driver.findElements(_b).map(e => new HtmlElement(e, driver))
     method(b, _)
   }
+
   def css(cssQuery: String): ParserMethod = {
     val method = (query: String, driver: WebDriver) =>
       driver.findElements(By.cssSelector(query)).map(e => new HtmlElement(e, driver))

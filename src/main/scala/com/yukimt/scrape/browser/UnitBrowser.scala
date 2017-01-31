@@ -7,7 +7,7 @@ import org.openqa.selenium.Cookie
 
 trait UnitBrowserLike extends Browser[UnitBrowser] {
 
-  protected val driver = new FixedHtmlUnitDriver(proxy)
+  protected val driver = new FixedHtmlUnitDriver
 
   /************Set up***********/
   customHeaders.foreach{
@@ -45,7 +45,6 @@ trait UnitBrowserLike extends Browser[UnitBrowser] {
 
 class UnitBrowser(
   val url: String,
-  val proxy: Option[ProxyServer] = None,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
   val customHeaders: Map[String, String] = Map.empty)
   extends UnitBrowserLike with WindowManager[UnitBrowserLike, UnitBrowser]
