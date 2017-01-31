@@ -36,8 +36,10 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
 
     "execute javascript" in {
       val browser = new UnitBrowser("http://localhost:3000/view")
-      browser.executeJsWithResult("return navigator.cookieEnabled;") === true
-      val result = browser.executeJs("myVariable += 10;").executeJsWithResult("return myVariable;")
+      browser.getFromJs("return navigator.cookieEnabled;") === true
+      browser.getListFromJs("return ['2', 'dd'];") === Seq("2", "dd")
+      browser.getObjectFromJs("return {a: '234', b:23};") === Map("a"->"234", "b"->23)
+      val result = browser.js("myVariable += 10;").getFromJs("return myVariable;")
       result === 130
     }
     
@@ -47,7 +49,7 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
       browser.addCookie("hoge", "fuga")
       browser.addCookie("scrape", "4s")
       browser.cookies === Map("hoge"->"fuga", "scrape" -> "4s")
-      browser.executeJsWithResult("return document.cookie;") === "hoge=fuga; scrape=4s"
+      browser.getFromJs("return document.cookie;") === "hoge=fuga; scrape=4s"
       browser.cookie("hoge") === Some("fuga")
       browser.cookie("hakushu") === None
       browser.clearCookie.cookies === Map.empty

@@ -5,6 +5,8 @@ import collection.JavaConversions._
 import scala.concurrent.duration.FiniteDuration
 import org.openqa.selenium.{WebDriver, Cookie, By, JavascriptExecutor}
 import com.yukimt.scrape.element.{Parser, Element, HtmlElement}
+import org.json4s.JObject
+import org.json4s.jackson.JsonMethods
 
 trait Browser[S] {
   implicit def browserToS(b: Browser[S]): S = b.asInstanceOf[S]
@@ -24,13 +26,19 @@ trait Browser[S] {
   def cookie(key: String): Option[String] 
   
   /************Javascript***********/
-  def executeJs(code: String): S = {
-    executeJsWithResult(code)
+  def js(code: String): S = {
+    getFromJs(code)
     this
   }
-  
-  def executeJsWithResult(code: String): Any = {
+  def getFromJs(code: String): Any = {
     driver.asInstanceOf[JavascriptExecutor].executeScript(code)
+  }
+  def getListFromJs(code: String): Seq[Any] = {
+    driver.asInstanceOf[JavascriptExecutor].executeScript(code).asInstanceOf[java.util.ArrayList[Any]]
+  }
+  def getObjectFromJs(code: String): Map[String, Any] = {
+    driver.asInstanceOf[JavascriptExecutor].executeScript(code)
+      .asInstanceOf[java.util.Map[String, Any]].toMap
   }
 
   /************Parse***********/

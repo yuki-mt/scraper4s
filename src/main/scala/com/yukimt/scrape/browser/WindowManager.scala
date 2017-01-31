@@ -46,7 +46,7 @@ trait WindowManager[S, T <: S] {
 
   def depulicateWindow(swtichToNewWindow: Boolean = false): Window = {
     val oldWindows = driver.getWindowHandles
-    executeJs(s"window.open('$currentUrl');")
+    js(s"window.open('$currentUrl');")
     val newWindow = Window((driver.getWindowHandles -- oldWindows).head)
     if(swtichToNewWindow)
       switch(newWindow)

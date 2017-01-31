@@ -21,7 +21,7 @@ class PhantomBrowserSpec extends Specification with NoTimeConversions{
         customHeaders = Map("X-My-Header" -> "hogefuga")
       )
 
-      val result = JsonMethods.parse(browser.body.replaceAll("<.+>", "")).asInstanceOf[JObject].values
+      val result = JsonMethods.parse(browser.body.replaceAll("<.+?>", "")).asInstanceOf[JObject].values
       val headers = result("headers").asInstanceOf[Map[String, String]]
       
       headers("user-agent") === "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10; rv:33.0) Gecko/20100101 Firefox/33.0"
@@ -30,8 +30,8 @@ class PhantomBrowserSpec extends Specification with NoTimeConversions{
 
     "execute javascript" in {
       val browser = new PhantomBrowser("http://localhost:3000/view")
-      browser.executeJsWithResult("return navigator.cookieEnabled;") === true
-      val result = browser.executeJs("myVariable += 10;").executeJsWithResult("return myVariable;")
+      browser.getFromJs("return navigator.cookieEnabled;") === true
+      val result = browser.js("myVariable += 10;").getFromJs("return myVariable;")
       result === 130
     }
     
@@ -41,7 +41,7 @@ class PhantomBrowserSpec extends Specification with NoTimeConversions{
       browser.addCookie("hoge", "fuga")
       browser.addCookie("scrape", "4s")
       browser.cookies === Map("hoge"->"fuga", "scrape" -> "4s")
-      browser.executeJsWithResult("return document.cookie;") === "hoge=fuga; scrape=4s"
+      browser.getFromJs("return document.cookie;") === "hoge=fuga; scrape=4s"
       browser.cookie("hoge") === Some("fuga")
       browser.cookie("hakushu") === None
       browser.clearCookie.cookies === Map.empty
