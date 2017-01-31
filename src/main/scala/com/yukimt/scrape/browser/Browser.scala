@@ -17,25 +17,11 @@ trait Browser[S] {
   def customHeaders: Map[String, String]
   
   /************Cookie***********/
-  def addCookie(key: String, value: String): S = {
-    driver.manage.addCookie(new Cookie(key, value))
-    this
-  }
-  def removeCookie(key: String): S = {
-    val c = driver.manage.getCookieNamed("key")
-    driver.manage.deleteCookie(c)
-    this
-  }
-  def clearCookie: S = {
-    driver.manage.deleteAllCookies
-    this
-  }
-  def cookies:Map[String, String] = {
-    driver.manage.getCookies.map(c => c.getName -> c.getValue).toMap
-  }
-  def cookie(key: String): Option[String] = {
-    Option(driver.manage.getCookieNamed(key)).map(_.getValue)
-  }
+  def addCookie(key: String, value: String): S 
+  def removeCookie(key: String): S 
+  def clearCookie: S 
+  def cookies:Map[String, String] 
+  def cookie(key: String): Option[String] 
   
   /************Javascript***********/
   def executeJs(code: String): S = {

@@ -1,7 +1,9 @@
 package com.yukimt.scrape
 package browser
 
+import collection.JavaConversions._
 import scala.concurrent.duration._
+import org.openqa.selenium.Cookie
 
 trait UnitBrowserLike extends Browser[UnitBrowser] {
 
@@ -15,6 +17,26 @@ trait UnitBrowserLike extends Browser[UnitBrowser] {
   driver.setHeader("User-Agent", userAgent.toString)
   driver.get(url)
 
+  /************Cookie***********/
+  override def addCookie(key: String, value: String) = {
+    driver.manage.addCookie(new Cookie(key, value))
+    this
+  }
+  override def removeCookie(key: String) = {
+    val c = driver.manage.getCookieNamed("key")
+    driver.manage.deleteCookie(c)
+    this
+  }
+  override def clearCookie = {
+    driver.manage.deleteAllCookies
+    this
+  }
+  override def cookies:Map[String, String] = {
+    driver.manage.getCookies.map(c => c.getName -> c.getValue).toMap
+  }
+  override def cookie(key: String): Option[String] = {
+    Option(driver.manage.getCookieNamed(key)).map(_.getValue)
+  }
 
   /************Response Header***********/
   def responseHeaders = driver.headers

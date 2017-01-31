@@ -9,6 +9,28 @@ import org.openqa.selenium.OutputType
 import org.apache.commons.io.FileUtils
 
 trait PhantomBrowserLike extends Browser[PhantomBrowser] {
+
+  /************Cookie***********/
+  override def addCookie(key: String, value: String) = {
+    executeJs(s"document.cookie = '$key=' + encodeURIComponent('$value') + ';';")
+    this
+  }
+  override def removeCookie(key: String) = {
+    executeJs(s"document.cookie = '$key=; max-age=0;';")
+    this
+  }
+  override def clearCookie = {
+    driver.manage.deleteAllCookies
+    this
+  }
+  override def cookies:Map[String, String] = {
+    driver.manage.getCookies.map(c => c.getName -> c.getValue).toMap
+  }
+  override def cookie(key: String): Option[String] = {
+    val code = s"val cook = (document.cookie + ';').match(/$key\=(.+);/);if(cook) return decodeURIComponent(cook[1]); else cook;"
+    Option(executeJsWithResult(code)).map(_.toString)
+  }
+
   /************Set up***********/
   val cap = DesiredCapabilities.phantomjs
   customHeaders.foreach{
