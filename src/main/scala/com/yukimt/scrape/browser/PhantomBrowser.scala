@@ -7,26 +7,35 @@ import org.openqa.selenium.remote.DesiredCapabilities
 import java.io.File
 import org.openqa.selenium.OutputType
 import org.apache.commons.io.FileUtils
+import java.net.{URLEncoder, URLDecoder}
 
 trait PhantomBrowserLike extends Browser[PhantomBrowser] {
+  val codingKey = "utf-8"
 
   /************Cookie***********/
   override def addCookie(key: String, value: String) = {
-    js(s"document.cookie = '$key=' + encodeURIComponent('$value') + ';';")
-    this
+    val encodedKey = URLEncoder.encode(key, codingKey)
+    val encodedValue = URLEncoder.encode(value, codingKey)
+    js(s"document.cookie = '$encodedKey=$encodedValue';")
   }
   override def removeCookie(key: String) = {
-    js(s"document.cookie = '$key=; max-age=0;';")
-    this
+    val encodedKey = URLEncoder.encode(key, codingKey)
+    js(s"document.cookie = '$encodedKey=; max-age=0;';")
   }
   override def clearCookie = {
-    this
+    js("document.cookie.split('; ').forEach(function(c) { document.cookie = c.replace(/=.*/, '=; max-age=0;');});")
   }
   override def cookies:Map[String, String] = {
-    Map.empty//driver.manage.getCookies.map(c => c.getName -> c.getValue).toMap
+    getFromJs("return document.cookie;").toString.split("; ").collect {
+      case c if c.nonEmpty =>
+        val split = c.split("=")
+        URLDecoder.decode(split.head, codingKey) -> URLDecoder.decode(split.last, codingKey)
+    }.toMap
   }
   override def cookie(key: String): Option[String] = {
-    val code = s"val cook = (document.cookie + ';').match(/$key\=(.+);/);if(cook) return decodeURIComponent(cook[1]); else cook;"
+    val encodedKey = URLEncoder.encode(key, codingKey)
+    val code = s"var cook = (document.cookie + ';').match(/$encodedKey=(.+?);/);" + 
+      "if(cook) return decodeURIComponent(cook[1]); else cook;"
     Option(getFromJs(code)).map(_.toString)
   }
 
