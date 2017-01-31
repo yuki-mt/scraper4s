@@ -15,7 +15,7 @@ trait PhantomBrowserLike extends Browser[PhantomBrowser] {
     case (key, value) =>
       cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + key, value)
   }
-  cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "User-Agent", userAgent)
+  cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "User-Agent", userAgent.toString)
   proxy.foreach{p =>
     val arg = Seq(s"--proxy=${p.host}:${p.port}", s"--proxy-auth=${p.username}:${p.password}", "--proxy-type=http")
     cap.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, arg)
