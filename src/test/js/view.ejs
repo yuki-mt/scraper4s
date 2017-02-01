@@ -28,25 +28,7 @@
 			</select>
 		</form>
 		<script>
-			var msg = "nothing";
-			function link(){
-				msg = "link";
-				alert("you ok");
-				location.href = "/";
-			}
-			function conf(){
-				msg = "conf";
-				if(confirm("you ok?"))
-					location.href = "/";
-			}
-			function prom(){
-				msg = prompt("r u ok?", "no");
-				location.href = "/";
-			}
 			var myVariable = 120;
 		</script>
-		<button onclick='link()'>link</button>
-		<button onclick='conf()'>confirm</button>
-		<button onclick='prom()'>prom</button>
 	</body>
 </html>

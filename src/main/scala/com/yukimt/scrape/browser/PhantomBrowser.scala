@@ -46,8 +46,6 @@ trait PhantomBrowserLike extends Browser[PhantomBrowser] {
       cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + key, value)
   }
   cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "User-Agent", userAgent.toString)
-  val arg = Seq("--proxy=192.168.33.11:22", "--proxy-auth=vagrant:vagrant", "--proxy-type=http")
-  cap.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, arg)
   protected val driver = new PhantomJSDriver(cap)
   driver.get(url)
 
