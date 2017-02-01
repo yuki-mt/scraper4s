@@ -1,9 +1,13 @@
 const app = require('express')(),
-			bodyParser = require('body-parser');;
+			bodyParser = require('body-parser'),
+			basicAuth = require("basic-auth-connect");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('views', __dirname);
 app.set('view engine', 'ejs');
+app.all('/basic', basicAuth(function(user, pw){
+	return user === 'u' && pw === 'p';
+}));
 
 app.get('/', function(req, res){
 	const response = {
@@ -19,6 +23,9 @@ app.post('/form', function(req, res){
 });
 
 app.get('/view', function(req, res) {
+	res.render('view');
+});
+app.get('/basic', function(req, res) {
 	res.render('view');
 });
 

@@ -13,6 +13,10 @@ class UnitBrowserSpec extends Specification with NoTimeConversions{
   sequential
 
   "UnitBrowser" should {
+    "basic" in {
+      val browser = new UnitBrowser("http://localhost:3000/basic", basicAuth = Some(BasicAuth("u", "p")))
+      browser.extractElement(p => p >> css("h1")).text === "H1 tag here"
+    }
     "set headers" in {
       val browser = new UnitBrowser(
         "http://localhost:3000",

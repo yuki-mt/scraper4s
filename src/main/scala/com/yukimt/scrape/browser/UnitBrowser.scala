@@ -15,6 +15,7 @@ trait UnitBrowserLike extends Browser[UnitBrowser] {
       driver.setHeader(key, value)
   }
   driver.setHeader("User-Agent", userAgent.toString)
+  basicAuth.foreach(b => driver.setHeader(b.key, b.encode))
   driver.get(url)
 
   /************Cookie***********/
@@ -46,5 +47,6 @@ trait UnitBrowserLike extends Browser[UnitBrowser] {
 class UnitBrowser(
   val url: String,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
+  val basicAuth: Option[BasicAuth] = None,
   val customHeaders: Map[String, String] = Map.empty)
   extends UnitBrowserLike with WindowManager[UnitBrowserLike, UnitBrowser]

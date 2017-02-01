@@ -16,6 +16,7 @@ trait Browser[S] {
   def url: String
   def userAgent: UserAgent
   def customHeaders: Map[String, String]
+  def basicAuth: Option[BasicAuth]
   
   /************Cookie***********/
   def addCookie(key: String, value: String): S 

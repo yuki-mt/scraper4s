@@ -46,6 +46,7 @@ trait PhantomBrowserLike extends Browser[PhantomBrowser] {
       cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + key, value)
   }
   cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "User-Agent", userAgent.toString)
+  basicAuth.foreach(b => cap.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + b.key, b.encode))
   protected val driver = new PhantomJSDriver(cap)
   driver.get(url)
 
@@ -60,5 +61,6 @@ trait PhantomBrowserLike extends Browser[PhantomBrowser] {
 class PhantomBrowser(
   val url: String,
   val userAgent: UserAgent = new UserAgent(Device.Mac, BrowserType.Chrome),
+  val basicAuth: Option[BasicAuth] = None,
   val customHeaders: Map[String, String] = Map.empty)
   extends PhantomBrowserLike with WindowManager[PhantomBrowserLike, PhantomBrowser]
