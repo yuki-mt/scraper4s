@@ -68,8 +68,12 @@ trait Browser[S] {
   }
 
   /************Wait***********/
-  def wait(cssQuery: String, timeoutSeconds: Int):S = {
+  def waitForElement(cssQuery: String, timeoutSeconds: Int):S = {
     new WebDriverWait(driver, timeoutSeconds).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(cssQuery)))
+    this
+  }
+  def waitForTitle(title: String, timeoutSeconds: Int):S = {
+    new WebDriverWait(driver, timeoutSeconds).until(ExpectedConditions.titleContains("Scala"))
     this
   }
   

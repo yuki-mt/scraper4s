@@ -39,6 +39,10 @@ trait UnitBrowserLike extends Browser[UnitBrowser] {
     Option(driver.manage.getCookieNamed(key)).map(_.getValue)
   }
 
+  def setJsEnabled(flg: Boolean): UnitBrowser = {
+    driver.setJavascriptEnabled(flg)
+    this
+  }
   /************Response Header***********/
   def responseHeaders = driver.headers
   def statusCode = driver.statusCode

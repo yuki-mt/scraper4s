@@ -3,11 +3,12 @@ package browser
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import collection.JavaConversions._
+import com.gargoylesoftware.htmlunit.BrowserVersion
 
 /**
  * Not expected to use directly. This class will be used through UnitBrowser class
  */
-private[browser] class FixedHtmlUnitDriver extends HtmlUnitDriver(true) {
+private[browser] class FixedHtmlUnitDriver extends HtmlUnitDriver(BrowserVersion.CHROME) {
   private var _code: Int = 0
   private var _headers: Map[String, String] = Map.empty
 
@@ -25,4 +26,6 @@ private[browser] class FixedHtmlUnitDriver extends HtmlUnitDriver(true) {
 
   def header(key: String) = _headers.get(key)
   def headers = _headers
+  
+  setJavascriptEnabled(true)
 }
