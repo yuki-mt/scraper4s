@@ -7,6 +7,7 @@ import org.openqa.selenium.{WebDriver, Cookie, By, JavascriptExecutor}
 import com.yukimt.scrape.element.{Parser, Element, HtmlElement}
 import org.json4s.JObject
 import org.json4s.jackson.JsonMethods
+import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
 
 trait Browser[S] {
   implicit def browserToS(b: Browser[S]): S = b.asInstanceOf[S]
@@ -66,6 +67,12 @@ trait Browser[S] {
     f(parser)
   }
 
+  /************Wait***********/
+  def wait(cssQuery: String, timeoutSeconds: Int):S = {
+    new WebDriverWait(driver, timeoutSeconds).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(cssQuery)))
+    this
+  }
+  
   def title = driver.getTitle
   def body = driver.getPageSource
   def currentUrl = driver.getCurrentUrl
