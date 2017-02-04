@@ -1,7 +1,7 @@
 # Scraper4s
 **Scraping Tool in Scala**
 
-Wrapper of Selenuim Web Driver in Java
+Wrapper of Selenuim WebDriver
 
 ## import 
 
@@ -71,10 +71,9 @@ object Boot extends App {
   val browser = new PhantomBrowser("https://www.yahoo.com/")
 
   browser.parse{ parser =>
+  	//search with "Scala" keyword
     val searchBox = parser >> css("#uh-search-box")
     searchBox.typing("Scala")
-    
-    //search with "Scala" keyword
     (searchBox >> parentForm).submit
     
     // wait until innerText of <title> tag contains "Scala"
@@ -247,7 +246,7 @@ val attributes: Map[String, String] = parent.attributes
 val innerText: String = parent.text
 ```
 
-[Detail of HtmlElement, Element](https://github.com/yuki-mt/scraper4s/docs/element.md)
+[Detail of HtmlElement, Element](https://github.com/yuki-mt/scraper4s/tree/master/docs/element.md)
 
 ##Copyright
 Copyright (c) 2017- yuki-mt. See LICENSE for details.
