@@ -1,4 +1,6 @@
 # Scraper4s
+**Scraping Tool in Scala**
+
 Wrapper of Selenuim Web Driver in Java
 
 ## import 
@@ -57,10 +59,8 @@ object Boot extends App {
 
 ```
 
-### Window
+### Use multiple windows, extract elements
 ```
-package com.yukimt.scrape
-
 import com.yukimt.scrape.browser.PhantomBrowser
 import com.yukimt.scrape.element.ElementMethod._
 import com.yukimt.scrape.element.ParserMethod._
@@ -104,7 +104,18 @@ object Boot extends App {
 }
 ```
 
-## Browsers
+## Component List of Scraper4s (details of each compoent are following)
+- Browser
+	- UnitBrowser
+	- PhantomBrowser
+- Parser
+- Element
+	- HtmlElement
+		- FormElement
+		- ATagElement
+	- Element
+
+## Browser
 Be careful. This is mutable.
 ### Common Functionalities
 - Wait for an element to appear
@@ -117,14 +128,14 @@ Be careful. This is mutable.
 - Change UserAgent
 - Execute Javascript and get result
 
-[Detail of Browser trait](https://github.com/yuki-mt/scraper4s/docs/browser.md)
+[Detail of Browser trait](https://github.com/yuki-mt/scraper4s/tree/master/docs/browser.md)
 
 
-### UnitBrowser
+### UnitBrowser (extends Browser trait)
 Based on HtmlUnitDriver in Selenium Web Driver
 #### pros
 - Faster
-- Able to get Response Header (such as StatusCode)
+- Able to get Response Header (such as Status Code)
 
 #### cons
 - Does not support screenshots
@@ -139,7 +150,7 @@ val headers: Map[String, String] = browser.responseHeaders
 val statusCode: Int = browser.statusCode
 ```
 
-### PhantomBrowser
+### PhantomBrowser (extends Browser trait)
 Based on PhantomJSDriver in Selenium Web Driver
 #### pros
 - Supports screenshots
@@ -151,11 +162,12 @@ Based on PhantomJSDriver in Selenium Web Driver
 
 #### How to take a screenshot
 ```
-import com.yukimt.scrape.browser.UnitBrowser
+import com.yukimt.scrape.browser.PhantomBrowser
 
-val browser = new UnitBrowser("http://....")
+val browser = new PhantomBrowser("http://....")
 
 //take a screenshot (width: 700px, hight: 500px)
+//file path needs to be absolute path
 browser.takeScreenshot("file path", ViewPoint(700, 500))
 ```
 
@@ -214,7 +226,6 @@ browser.parse{ parser =>
 [How to use 'By'](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/By.html)
 
 ### HtmlElement gets HtmlElement 
-#### e.g.
 ```
 import com.yukimt.scrape.browser.PhantomBrowser
 import com.yukimt.scrape.element.ParserMethod.css
@@ -227,7 +238,8 @@ val parent: Element = browser.extactElement{ parser =>
   val elements: Seq[HtmlElement] = e >>> find("css query here") 
   val children = e >>> children
   val firstChild = e >> children
-  e >> parent
+  val parent: HtmlElement e >> parent
+  parent
 }
 
 val tagName: String = parent.tag
