@@ -2,7 +2,6 @@ package com.yukimt.scrape.element
 
 import org.openqa.selenium.{By, WebElement, WebDriver, JavascriptExecutor}
 import collection.JavaConversions._
-import org.openqa.selenium.support.ui.Select
 import org.json4s.JObject
 import org.json4s.jackson.JsonMethods
 
