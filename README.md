@@ -1,9 +1,8 @@
-# Scraper4s
-**Scraping Tool in Scala**
+# Scraper4s: Scraping Tool in Scala
 
 Wrapper of Selenuim WebDriver
 
-## import 
+## Installation 
 
 in buid.sbt
 
@@ -248,5 +247,9 @@ val innerText: String = parent.text
 
 [Detail of HtmlElement, Element](https://github.com/yuki-mt/scraper4s/tree/master/docs/element.md)
 
-##Copyright
-Copyright (c) 2017- yuki-mt. See LICENSE for details.
+## Contributing
+Always welcome for your contribution
+
+## License & Authors
+Author:: @yuki-mt
+License:: MIT
