@@ -2,7 +2,7 @@
 
 Wrapper of Selenuim WebDriver
 
-## Installation 
+## Installation
 
 in buid.sbt
 
